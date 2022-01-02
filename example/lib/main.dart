@@ -1,4 +1,3 @@
-import 'package:example/ScreenTwo.dart';
 import 'package:flutter/material.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
@@ -28,117 +27,69 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        backgroundColor: Colors.green,
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
             children: <Widget>[
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    'Music Albums',
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
-                  ),
-                  Expanded(child: Center()),
-                  IconButton(icon: Icon(Icons.shopping_cart), onPressed: () {}),
-                  CircleAvatar(
-                    child: Image.asset('assets/images/dp_default.png'),
-                  )
-                ],
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              TextField(
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                  hintText: 'Look for your Interest!',
-                  fillColor: Colors.grey.shade200,
-                  filled: true,
-                ),
+              Text(
+                'Music Albums',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
               SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  DropdownButton(
-                    style: TextStyle(fontSize: 15, color: Colors.black),
-                    icon: Icon(Icons.keyboard_arrow_down),
-                    underline: Container(
-                      color: Colors.white,
-                    ),
-                    items: ['Featured', 'Most Rated', 'Recent', 'Popular']
-                        .map<DropdownMenuItem>((e) => DropdownMenuItem(
-                              child: Text(e),
-                              value: e,
-                            ))
-                        .toList(),
-                    onChanged: (newItem) {},
-                  ),
-                  IconButton(icon: Icon(Icons.sort), onPressed: () {})
-                ],
-              ),
-              SizedBox(height: 10),
-              Expanded(
-                child: GridView(
-                  physics: BouncingScrollPhysics(),
-                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: MediaQuery.of(context).size.width ~/ 200,
-                  ),
-                  children: List.generate(
-                    12,
-                    (e) => FocusedMenuHolder(
-                      blurSize: 5.0,
-                      duration: Duration(milliseconds: 100),
-                      animateMenuItems: true,
-                      blurBackgroundColor: Colors.black54,
-                      bottomOffsetHeight: 100,
-                      openWithTap: true,
-                      menuItems: <FocusedMenuItem>[
-                        FocusedMenuItem(
-                          title: Text('Reply'),
-                          trailingIcon: Icon(Icons.open_in_new),
-                          onPressed: () {},
+              ...List.generate(
+                8,
+                (e) => Align(
+                  alignment:
+                      e.isEven ? Alignment.centerLeft : Alignment.centerRight,
+                  child: FocusedMenuHolder(
+                    right: e.isOdd,
+                    blurSize: 5.0,
+                    menuItems: <FocusedMenuItem>[
+                      FocusedMenuItem(
+                        title: Text('Reply'),
+                        trailingIcon: Icon(Icons.open_in_new),
+                        onPressed: () {},
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Copy'),
+                        trailingIcon: Icon(Icons.share),
+                        onPressed: () {},
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Forward'),
+                        trailingIcon: Icon(Icons.favorite_border),
+                        onPressed: () {},
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Show stickers set'),
+                        trailingIcon: Icon(Icons.favorite_border),
+                        onPressed: () {},
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Report'),
+                        trailingIcon: Icon(Icons.report),
+                        onPressed: () {},
+                      ),
+                      FocusedMenuItem(
+                        title: Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.redAccent),
                         ),
-                        FocusedMenuItem(
-                          title: Text('Copy'),
-                          trailingIcon: Icon(Icons.share),
-                          onPressed: () {},
+                        trailingIcon: Icon(
+                          Icons.delete,
+                          color: Colors.redAccent,
                         ),
-                        FocusedMenuItem(
-                          title: Text('Forward'),
-                          trailingIcon: Icon(Icons.favorite_border),
-                          onPressed: () {},
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Show stickers set'),
-                          trailingIcon: Icon(Icons.favorite_border),
-                          onPressed: () {},
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Report'),
-                          trailingIcon: Icon(Icons.report),
-                          onPressed: () {},
-                        ),
-                        FocusedMenuItem(
-                          title: Text(
-                            'Delete',
-                            style: TextStyle(color: Colors.redAccent),
-                          ),
-                          trailingIcon: Icon(
-                            Icons.delete,
-                            color: Colors.redAccent,
-                          ),
-                          onPressed: () {},
-                        ),
-                      ],
-                      onPressed: () {},
+                        onPressed: () {},
+                      ),
+                    ],
+                    onPressed: () {},
+                    child: Hero(
+                      tag: e,
                       child: Card(
-                        child: Column(
-                          children: <Widget>[
-                            Image.asset('assets/images/image_${e + 1}.jpg'),
-                          ],
+                        child: Padding(
+                          padding: EdgeInsets.all(12.0),
+                          child: Text('$e - Hello, is it this one?'),
                         ),
                       ),
                     ),
@@ -147,15 +98,6 @@ class MyHomePage extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          items: <BottomNavigationBarItem>[
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Home'),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Menu 2'),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Menu 3'),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Menu 4'),
-            BottomNavigationBarItem(icon: Icon(Icons.add), label: 'Menu 5'),
-          ],
         ),
       ),
     );
