@@ -89,13 +89,7 @@ class MyHomePage extends StatelessWidget {
                   children: List.generate(
                     12,
                     (e) => FocusedMenuHolder(
-                      menuWidth: MediaQuery.of(context).size.width * 0.50,
                       blurSize: 5.0,
-                      menuItemExtent: 45,
-                      menuBoxDecoration: BoxDecoration(
-                          color: Colors.grey,
-                          borderRadius:
-                              BorderRadius.all(Radius.circular(15.0))),
                       duration: Duration(milliseconds: 100),
                       animateMenuItems: true,
                       blurBackgroundColor: Colors.black54,
@@ -103,23 +97,28 @@ class MyHomePage extends StatelessWidget {
                       openWithTap: true,
                       menuItems: <FocusedMenuItem>[
                         FocusedMenuItem(
-                          title: Text('Open'),
+                          title: Text('Reply'),
                           trailingIcon: Icon(Icons.open_in_new),
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ScreenTwo()));
-                          },
+                          onPressed: () {},
                         ),
                         FocusedMenuItem(
-                          title: Text('Share'),
+                          title: Text('Copy'),
                           trailingIcon: Icon(Icons.share),
                           onPressed: () {},
                         ),
                         FocusedMenuItem(
-                          title: Text('Favorite'),
+                          title: Text('Forward'),
                           trailingIcon: Icon(Icons.favorite_border),
+                          onPressed: () {},
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Show stickers set'),
+                          trailingIcon: Icon(Icons.favorite_border),
+                          onPressed: () {},
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Report'),
+                          trailingIcon: Icon(Icons.report),
                           onPressed: () {},
                         ),
                         FocusedMenuItem(
