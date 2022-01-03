@@ -1,6 +1,8 @@
 library focused_menu;
 
 import 'package:flutter/material.dart';
+import 'package:visibility_detector/visibility_detector.dart';
+
 import 'modals.dart';
 
 export 'modals.dart';
@@ -24,10 +26,15 @@ class FocusedMenuHolder extends StatefulWidget {
 
   final bool right;
 
+  /// Whether the item is not visible in the screen, needing to request a
+  /// scroll
+  final bool Function()? onScrollRequested;
+
   const FocusedMenuHolder({
     Key? key,
     required this.child,
     required this.menuItems,
+    this.onScrollRequested,
     this.right = false,
     this.onPressed,
     this.duration,
@@ -55,6 +62,12 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(Offset.zero);
     childOffset = Offset(offset.dx, offset.dy);
+    if (childOffset.dy.isNegative) {
+      childOffset = Offset(
+        childOffset.dx,
+        MediaQuery.of(context).padding.top + 5.0,
+      );
+    }
     childSize = size;
   }
 
@@ -75,40 +88,54 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     return Future.delayed(_animationDuration);
   }
 
+  double _visibilityFraction = 0.0;
+
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return VisibilityDetector(
       key: containerKey,
-      onSecondaryTap: () async {
-        widget.onPressed?.call();
-        await openMenu(context);
+      onVisibilityChanged: (visibilityInfo) {
+        _visibilityFraction = visibilityInfo.visibleFraction;
       },
-      onTapDown: (_) => resetScale(_pressScale),
-      onTapUp: (_) {
-        resetScale();
-        widget.onPressed?.call();
-        if (widget.openWithTap) {
-          openMenu(context);
-        }
-      },
-      onLongPress: () async {
-        if (!widget.openWithTap) {
-          await resetScale();
-          openMenu(context);
-        }
-      },
-      onLongPressEnd: (_) => resetScale(),
-      onTapCancel: () => resetScale(),
-      child: AnimatedScale(
-        duration: _animationDuration,
-        scale: _currentScale,
-        child: child,
+      child: GestureDetector(
+        onSecondaryTap: () async {
+          widget.onPressed?.call();
+          await openMenu(context);
+        },
+        onTapDown: (_) => resetScale(_pressScale),
+        onTapUp: (_) {
+          resetScale();
+          widget.onPressed?.call();
+          if (widget.openWithTap) {
+            openMenu(context);
+          }
+        },
+        onLongPress: () async {
+          if (!widget.openWithTap) {
+            await resetScale();
+            openMenu(context);
+          }
+        },
+        onLongPressEnd: (_) => resetScale(),
+        onTapCancel: () => resetScale(),
+        child: AnimatedScale(
+          duration: _animationDuration,
+          scale: _currentScale,
+          child: child,
+        ),
       ),
     );
   }
 
   Future<void> openMenu(BuildContext context) async {
     getOffset();
+
+    debugPrint('widget visible $_visibilityFraction');
+
+    if (_visibilityFraction < 0.5) {
+      if (!(widget.onScrollRequested?.call() ?? false)) return;
+    }
+
     await Navigator.push(
       context,
       PageRouteBuilder(
