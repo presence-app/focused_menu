@@ -45,7 +45,7 @@ class FocusedMenuHolder extends StatefulWidget {
 
 class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   GlobalKey containerKey = GlobalKey();
-  Offset childOffset = Offset(0, 0);
+  Offset childOffset = const Offset(0, 0);
   late Size childSize;
 
   void getOffset() {
@@ -85,7 +85,8 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     await Navigator.push(
       context,
       PageRouteBuilder(
-        transitionDuration: widget.duration ?? Duration(milliseconds: 100),
+        transitionDuration:
+            widget.duration ?? const Duration(milliseconds: 200),
         pageBuilder: (context, animation, secondaryAnimation) {
           animation = Tween(begin: 0.0, end: 1.0).animate(animation);
           return _FocusedMenuDetails(
@@ -99,7 +100,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             blurSize: widget.blurSize,
             menuWidth: widget.menuWidth,
             blurBackgroundColor: widget.blurBackgroundColor,
-            bottomOffsetHeight: widget.bottomOffsetHeight ?? 4.0,
+            bottomOffsetHeight: widget.bottomOffsetHeight ?? 10.0,
             menuOffset: widget.menuOffset ?? 0,
             right: widget.right,
           );
@@ -111,7 +112,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   }
 }
 
-class _FocusedMenuDetails extends StatelessWidget {
+class _FocusedMenuDetails extends StatefulWidget {
   final Animation<double> animation;
   final List<FocusedMenuItem> menuItems;
   final BoxDecoration? menuBoxDecoration;
@@ -143,29 +144,40 @@ class _FocusedMenuDetails extends StatelessWidget {
     required this.right,
   }) : super(key: key);
 
+  @override
+  State<_FocusedMenuDetails> createState() => _FocusedMenuDetailsState();
+}
+
+class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
   Animation<double> get _animation => CurvedAnimation(
-        parent: animation,
-        curve: Curves.easeInOutBack,
-      ).drive(Tween<double>(
-        begin: 0.83,
-        end: 1.0,
-      ));
+        parent: widget.animation,
+        // curve: Curves.easeInOutBack,
+        curve: Curves.linear,
+      );
+  // .drive(Tween<double>(
+  //   begin: 0.83,
+  //   end: 1.0,
+  // ));
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     final maxMenuHeight = size.height * 0.45;
-    final listHeight = menuItems.length * (itemExtent ?? 45.0);
+    final listHeight = widget.menuItems.length * (widget.itemExtent ?? 45.0);
 
-    final maxMenuWidth = menuWidth ?? 250.0;
+    final maxMenuWidth = widget.menuWidth ?? 250.0;
     final double menuHeight = listHeight.clamp(0, maxMenuHeight);
-    final leftOffset = (childOffset.dx + maxMenuWidth) < size.width
-        ? childOffset.dx
-        : (childOffset.dx - maxMenuWidth + childSize!.width);
-    final double topOffset =
-        (childOffset.dy + childSize!.height - bottomOffsetHeight)
-            .clamp(0, size.height - menuHeight);
+    final leftOffset = (widget.childOffset.dx + maxMenuWidth) < size.width
+        ? widget.childOffset.dx
+        : (widget.childOffset.dx - maxMenuWidth + widget.childSize!.width);
+    final double topOffset = (widget.childOffset.dy + widget.childSize!.height)
+        .clamp(0, size.height - menuHeight - widget.bottomOffsetHeight);
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -178,8 +190,9 @@ class _FocusedMenuDetails extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: ColoredBox(
-                color: (blurBackgroundColor ?? Colors.black).withOpacity(0.3),
-                child: AbsorbPointer(),
+                color: (widget.blurBackgroundColor ?? Colors.black)
+                    .withOpacity(0.3),
+                child: const AbsorbPointer(),
               ),
             ),
           ),
@@ -188,72 +201,75 @@ class _FocusedMenuDetails extends StatelessWidget {
             left: leftOffset,
             child: ScaleTransition(
               scale: _animation,
-              alignment: right ? Alignment.topRight : Alignment.topLeft,
+              alignment:
+                  widget.right ? Alignment.centerRight : Alignment.centerLeft,
               // sizeFactor: _animation,
               // axisAlignment: 1.0,
-              child: Container(
-                width: maxMenuWidth,
-                height: menuHeight,
-                decoration: menuBoxDecoration ??
-                    BoxDecoration(
-                      color: Color(0xFFBFC0C2),
-                      borderRadius: BorderRadius.circular(12.0),
-                    ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12.0),
-                  child: Column(
-                    children: List.generate(menuItems.length, (index) {
-                      final item = menuItems[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.pop(context);
-                          item.onPressed();
-                        },
-                        child: Container(
-                          alignment: Alignment.center,
-                          height: itemExtent ?? 45.0,
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(
-                                style: index == menuItems.length - 1
-                                    ? BorderStyle.none
-                                    : BorderStyle.solid,
-                                width: 0.33,
-                                color: Color(0xFF6F6F6E).withOpacity(0.33),
+              child: FadeTransition(
+                opacity: _animation,
+                child: Container(
+                  width: maxMenuWidth,
+                  height: menuHeight,
+                  decoration: widget.menuBoxDecoration ??
+                      BoxDecoration(
+                        color: const Color(0xFFBFC0C2),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Column(
+                      children: List.generate(widget.menuItems.length, (index) {
+                        final item = widget.menuItems[index];
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                            item.onPressed();
+                          },
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: widget.itemExtent ?? 45.0,
+                            decoration: BoxDecoration(
+                              border: Border(
+                                bottom: BorderSide(
+                                  style: index == widget.menuItems.length - 1
+                                      ? BorderStyle.none
+                                      : BorderStyle.solid,
+                                  width: 0.33,
+                                  color:
+                                      const Color(0xFF6F6F6E).withOpacity(0.33),
+                                ),
                               ),
                             ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 8.0,
+                              horizontal: 18.0,
+                            ),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                item.title,
+                                if (item.trailingIcon != null)
+                                  item.trailingIcon!
+                              ],
+                            ),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 18.0,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              item.title,
-                              if (item.trailingIcon != null) item.trailingIcon!
-                            ],
-                          ),
-                        ),
-                      );
-                    }),
+                        );
+                      }),
+                    ),
                   ),
                 ),
               ),
             ),
           ),
           Positioned(
-            top: topOffset - childSize!.height,
-            // top: moveChild
-            //     ? topOffset - childSize!.height - bottomOffsetHeight
-            //     : childOffset.dy,
-            left: childOffset.dx,
+            top: topOffset - widget.childSize!.height,
+            left: widget.childOffset.dx,
             child: AbsorbPointer(
               absorbing: true,
               child: SizedBox(
-                width: childSize!.width,
-                height: childSize!.height,
-                child: child,
+                width: widget.childSize!.width,
+                height: widget.childSize!.height,
+                child: widget.child,
               ),
             ),
           ),
