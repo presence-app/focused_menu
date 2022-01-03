@@ -66,6 +66,15 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
         ),
       );
 
+  double _currentScale = 1.0;
+  static const double _pressScale = 0.85;
+  static const _animationDuration = Duration(milliseconds: 100);
+
+  Future<void> resetScale([double value = 1.0]) async {
+    setState(() => _currentScale = value);
+    return Future.delayed(_animationDuration);
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -74,18 +83,27 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
         widget.onPressed?.call();
         await openMenu(context);
       },
-      onTap: () async {
+      onTapDown: (_) => resetScale(_pressScale),
+      onTapUp: (_) {
+        resetScale();
         widget.onPressed?.call();
         if (widget.openWithTap) {
-          await openMenu(context);
+          openMenu(context);
         }
       },
       onLongPress: () async {
         if (!widget.openWithTap) {
-          await openMenu(context);
+          await resetScale();
+          openMenu(context);
         }
       },
-      child: child,
+      onLongPressEnd: (_) => resetScale(),
+      onTapCancel: () => resetScale(),
+      child: AnimatedScale(
+        duration: _animationDuration,
+        scale: _currentScale,
+        child: child,
+      ),
     );
   }
 
