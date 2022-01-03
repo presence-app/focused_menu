@@ -5,9 +5,10 @@ import 'modals.dart';
 
 export 'modals.dart';
 
+const kItemExtent = 45.0;
+
 class FocusedMenuHolder extends StatefulWidget {
   final Widget child;
-  final double? menuItemExtent;
   final double? menuWidth;
   final List<FocusedMenuItem> menuItems;
   final BoxDecoration? menuBoxDecoration;
@@ -31,7 +32,6 @@ class FocusedMenuHolder extends StatefulWidget {
     this.onPressed,
     this.duration,
     this.menuBoxDecoration,
-    this.menuItemExtent,
     this.blurSize,
     this.blurBackgroundColor,
     this.menuWidth,
@@ -100,7 +100,6 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
           animation = Tween(begin: 0.0, end: 1.0).animate(animation);
           return _FocusedMenuDetails(
             animation: animation,
-            itemExtent: widget.menuItemExtent,
             menuBoxDecoration: widget.menuBoxDecoration,
             child: child,
             childOffset: childOffset,
@@ -109,7 +108,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             blurSize: widget.blurSize,
             menuWidth: widget.menuWidth,
             blurBackgroundColor: widget.blurBackgroundColor,
-            bottomOffsetHeight: widget.bottomOffsetHeight ?? 10.0,
+            bottomOffsetHeight: widget.bottomOffsetHeight ?? 20.0,
             menuOffset: widget.menuOffset ?? 0,
             right: widget.right,
           );
@@ -126,7 +125,6 @@ class _FocusedMenuDetails extends StatefulWidget {
   final List<FocusedMenuItem> menuItems;
   final BoxDecoration? menuBoxDecoration;
   final Offset childOffset;
-  final double? itemExtent;
   final Size? childSize;
   final Widget child;
   final double? blurSize;
@@ -144,7 +142,6 @@ class _FocusedMenuDetails extends StatefulWidget {
     required this.childOffset,
     required this.childSize,
     required this.menuBoxDecoration,
-    required this.itemExtent,
     required this.blurSize,
     required this.blurBackgroundColor,
     required this.menuWidth,
@@ -178,7 +175,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
     final size = MediaQuery.of(context).size;
 
     final maxMenuHeight = size.height * 0.45;
-    final listHeight = widget.menuItems.length * (widget.itemExtent ?? 45.0);
+    final listHeight = widget.menuItems.length * kItemExtent;
 
     final maxMenuWidth = widget.menuWidth ?? 250.0;
     final double menuHeight = listHeight.clamp(0, maxMenuHeight);
@@ -206,7 +203,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
             ),
           ),
           Positioned(
-            top: topOffset,
+            top: topOffset + (widget.bottomOffsetHeight / 2),
             left: leftOffset,
             child: ScaleTransition(
               scale: _animation,
@@ -229,39 +226,22 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
                     child: Column(
                       children: List.generate(widget.menuItems.length, (index) {
                         final item = widget.menuItems[index];
-                        return GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                            item.onPressed();
-                          },
-                          child: Container(
-                            alignment: Alignment.center,
-                            height: widget.itemExtent ?? 45.0,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  style: index == widget.menuItems.length - 1
-                                      ? BorderStyle.none
-                                      : BorderStyle.solid,
-                                  width: 0.33,
-                                  color:
-                                      const Color(0xFF6F6F6E).withOpacity(0.33),
-                                ),
+                        return Container(
+                          alignment: Alignment.center,
+                          height: kItemExtent,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                style: index == widget.menuItems.length - 1
+                                    ? BorderStyle.none
+                                    : BorderStyle.solid,
+                                width: 0.33,
+                                color:
+                                    const Color(0xFF6F6F6E).withOpacity(0.33),
                               ),
                             ),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 8.0,
-                              horizontal: 18.0,
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                item.title,
-                                if (item.trailingIcon != null)
-                                  item.trailingIcon!
-                              ],
-                            ),
                           ),
+                          child: item,
                         );
                       }),
                     ),
@@ -273,11 +253,10 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
           Positioned(
             top: topOffset - widget.childSize!.height,
             left: widget.childOffset.dx,
-            child: AbsorbPointer(
-              absorbing: true,
+            child: IgnorePointer(
               child: SizedBox(
                 width: widget.childSize!.width,
-                height: widget.childSize!.height,
+                // height: widget.childSize!.height,
                 child: widget.child,
               ),
             ),
