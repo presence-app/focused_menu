@@ -84,13 +84,10 @@ class MyHomePage extends StatelessWidget {
                       ),
                     ],
                     onPressed: () {},
-                    child: Hero(
-                      tag: e,
-                      child: Card(
-                        child: Padding(
-                          padding: EdgeInsets.all(12.0),
-                          child: Text('$e - Hello, is it this one?'),
-                        ),
+                    child: Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(12.0),
+                        child: Text('$e - Hello, is it this one?'),
                       ),
                     ),
                   ),

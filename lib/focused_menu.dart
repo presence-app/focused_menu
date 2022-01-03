@@ -1,8 +1,9 @@
 library focused_menu;
 
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:focused_menu/modals.dart';
+import 'modals.dart';
+
+export 'modals.dart';
 
 class FocusedMenuHolder extends StatefulWidget {
   final Widget child;
@@ -10,7 +11,7 @@ class FocusedMenuHolder extends StatefulWidget {
   final double? menuWidth;
   final List<FocusedMenuItem> menuItems;
   final BoxDecoration? menuBoxDecoration;
-  final Function onPressed;
+  final VoidCallback? onPressed;
   final Duration? duration;
   final double? blurSize;
   final Color? blurBackgroundColor;
@@ -25,9 +26,9 @@ class FocusedMenuHolder extends StatefulWidget {
   const FocusedMenuHolder({
     Key? key,
     required this.child,
-    required this.onPressed,
     required this.menuItems,
-    required this.right,
+    this.right = false,
+    this.onPressed,
     this.duration,
     this.menuBoxDecoration,
     this.menuItemExtent,
@@ -46,7 +47,7 @@ class FocusedMenuHolder extends StatefulWidget {
 class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   GlobalKey containerKey = GlobalKey();
   Offset childOffset = const Offset(0, 0);
-  late Size childSize;
+  Size childSize = Size.zero;
 
   void getOffset() {
     final renderBox =
@@ -57,16 +58,24 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     childSize = size;
   }
 
+  Widget get child => Hero(
+        tag: containerKey,
+        child: Material(
+          type: MaterialType.transparency,
+          child: widget.child,
+        ),
+      );
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       key: containerKey,
       onSecondaryTap: () async {
-        widget.onPressed();
+        widget.onPressed?.call();
         await openMenu(context);
       },
       onTap: () async {
-        widget.onPressed();
+        widget.onPressed?.call();
         if (widget.openWithTap) {
           await openMenu(context);
         }
@@ -76,7 +85,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
           await openMenu(context);
         }
       },
-      child: widget.child,
+      child: child,
     );
   }
 
@@ -93,7 +102,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             animation: animation,
             itemExtent: widget.menuItemExtent,
             menuBoxDecoration: widget.menuBoxDecoration,
-            child: widget.child,
+            child: child,
             childOffset: childOffset,
             childSize: childSize,
             menuItems: widget.menuItems,
