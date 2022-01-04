@@ -67,7 +67,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     if (childOffset.dy.isNegative) {
       childOffset = Offset(
         childOffset.dx,
-        10.0,
+        MediaQuery.of(context).padding.top + 10.0,
       );
     }
   }
@@ -92,6 +92,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
+      key: containerKey,
       onSecondaryTap: () async {
         widget.onPressed?.call();
         await openMenu(context);
@@ -220,81 +221,78 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
     return Scaffold(
       backgroundColor:
           (widget.blurBackgroundColor ?? Colors.black).withOpacity(0.3),
-      body: SafeArea(
-        child: Stack(
-          fit: StackFit.expand,
-          children: <Widget>[
-            Positioned.fill(
-              child: GestureDetector(
-                onTap: () async {
-                  Navigator.pop(context);
-                },
-                child: const AbsorbPointer(),
-              ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: <Widget>[
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () async {
+                Navigator.pop(context);
+              },
+              child: const AbsorbPointer(),
             ),
-            Positioned(
-              top: topOffset + (widget.bottomOffsetHeight / 2),
-              left: widget.right ? null : leftOffset,
-              right: widget.right ? 12.0 : null,
-              child: ScaleTransition(
-                scale: _animation,
-                alignment:
-                    widget.right ? Alignment.centerRight : Alignment.centerLeft,
-                // sizeFactor: _animation,
-                // axisAlignment: 1.0,
-                child: FadeTransition(
-                  opacity: _animation,
-                  child: Container(
-                    width: maxMenuWidth,
-                    height: menuHeight,
-                    decoration: widget.menuBoxDecoration ??
-                        BoxDecoration(
-                          color: const Color(0xFFBFC0C2),
-                          borderRadius: BorderRadius.circular(12.0),
-                        ),
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(12.0),
-                      child: Column(
-                        children:
-                            List.generate(widget.menuItems.length, (index) {
-                          final item = widget.menuItems[index];
-                          return Container(
-                            alignment: Alignment.center,
-                            height: kItemExtent,
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                  style: index == widget.menuItems.length - 1
-                                      ? BorderStyle.none
-                                      : BorderStyle.solid,
-                                  width: 0.33,
-                                  color:
-                                      const Color(0xFF6F6F6E).withOpacity(0.33),
-                                ),
+          ),
+          Positioned(
+            top: topOffset + (widget.bottomOffsetHeight / 2),
+            left: widget.right ? null : leftOffset,
+            right: widget.right ? 12.0 : null,
+            child: ScaleTransition(
+              scale: _animation,
+              alignment:
+                  widget.right ? Alignment.centerRight : Alignment.centerLeft,
+              // sizeFactor: _animation,
+              // axisAlignment: 1.0,
+              child: FadeTransition(
+                opacity: _animation,
+                child: Container(
+                  width: maxMenuWidth,
+                  height: menuHeight,
+                  decoration: widget.menuBoxDecoration ??
+                      BoxDecoration(
+                        color: const Color(0xFFBFC0C2),
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12.0),
+                    child: Column(
+                      children: List.generate(widget.menuItems.length, (index) {
+                        final item = widget.menuItems[index];
+                        return Container(
+                          alignment: Alignment.center,
+                          height: kItemExtent,
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(
+                                style: index == widget.menuItems.length - 1
+                                    ? BorderStyle.none
+                                    : BorderStyle.solid,
+                                width: 0.33,
+                                color:
+                                    const Color(0xFF6F6F6E).withOpacity(0.33),
                               ),
                             ),
-                            child: item,
-                          );
-                        }),
-                      ),
+                          ),
+                          child: item,
+                        );
+                      }),
                     ),
                   ),
                 ),
               ),
             ),
-            Positioned(
-              top: topOffset - widget.childSize!.height,
-              left: widget.childOffset.dx,
-              child: IgnorePointer(
-                child: SizedBox(
-                  width: widget.childSize!.width,
-                  // height: widget.childSize!.height,
-                  child: widget.child,
-                ),
+          ),
+          Positioned(
+            top: topOffset - widget.childSize!.height,
+            left: widget.childOffset.dx,
+            child: IgnorePointer(
+              child: SizedBox(
+                width: widget.childSize!.width,
+                height: widget.childSize!.height,
+                child: widget.child,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
