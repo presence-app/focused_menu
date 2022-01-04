@@ -1,7 +1,6 @@
 library focused_menu;
 
 import 'package:flutter/material.dart';
-import 'package:visibility_detector/visibility_detector.dart';
 
 import 'modals.dart';
 
@@ -90,53 +89,39 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     return Future.delayed(_animationDuration);
   }
 
-  double _visibilityFraction = 0.0;
-
   @override
   Widget build(BuildContext context) {
-    return VisibilityDetector(
-      key: containerKey,
-      onVisibilityChanged: (visibilityInfo) {
-        _visibilityFraction = visibilityInfo.visibleFraction;
+    return GestureDetector(
+      onSecondaryTap: () async {
+        widget.onPressed?.call();
+        await openMenu(context);
       },
-      child: GestureDetector(
-        onSecondaryTap: () async {
-          widget.onPressed?.call();
-          await openMenu(context);
-        },
-        onTapDown: (_) => resetScale(_pressScale),
-        onTapUp: (_) {
-          resetScale();
-          widget.onPressed?.call();
-          if (widget.openWithTap) {
-            openMenu(context);
-          }
-        },
-        onLongPress: () async {
-          if (!widget.openWithTap) {
-            await resetScale();
-            openMenu(context);
-          }
-        },
-        onLongPressEnd: (_) => resetScale(),
-        onTapCancel: () => resetScale(),
-        child: AnimatedScale(
-          duration: _animationDuration,
-          scale: _currentScale,
-          child: child,
-        ),
+      onTapDown: (_) => resetScale(_pressScale),
+      onTapUp: (_) {
+        resetScale();
+        widget.onPressed?.call();
+        if (widget.openWithTap) {
+          openMenu(context);
+        }
+      },
+      onLongPress: () async {
+        if (!widget.openWithTap) {
+          await resetScale();
+          openMenu(context);
+        }
+      },
+      onLongPressEnd: (_) => resetScale(),
+      onTapCancel: () => resetScale(),
+      child: AnimatedScale(
+        duration: _animationDuration,
+        scale: _currentScale,
+        child: child,
       ),
     );
   }
 
   Future<void> openMenu(BuildContext context) async {
     getOffset(context);
-
-    // debugPrint('widget visible $_visibilityFraction');
-
-    // if (_visibilityFraction < 0.5) {
-    //   if (!(widget.onScrollRequested?.call() ?? false)) return;
-    // }
 
     await Navigator.push(
       context,
