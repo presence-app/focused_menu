@@ -13,8 +13,7 @@ class FocusedMenuHolder extends StatefulWidget {
   final List<FocusedMenuItem> menuItems;
   final BoxDecoration? menuBoxDecoration;
   final Duration? duration;
-  final double? blurSize;
-  final Color? blurBackgroundColor;
+  final Color? routeBackgroundColor;
   final double? bottomOffsetHeight;
   final double? menuOffset;
 
@@ -36,8 +35,7 @@ class FocusedMenuHolder extends StatefulWidget {
     this.right = false,
     this.duration,
     this.menuBoxDecoration,
-    this.blurSize,
-    this.blurBackgroundColor,
+    this.routeBackgroundColor,
     this.menuWidth,
     this.bottomOffsetHeight,
     this.menuOffset,
@@ -158,9 +156,8 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             childOffset: childOffset,
             childSize: childSize!,
             menuItems: widget.menuItems,
-            blurSize: widget.blurSize,
             menuWidth: widget.menuWidth,
-            blurBackgroundColor: widget.blurBackgroundColor,
+            routeBackgroundColor: widget.routeBackgroundColor,
             bottomOffsetHeight: widget.bottomOffsetHeight ?? 20.0,
             menuOffset: widget.menuOffset ?? 0,
             right: widget.right,
@@ -181,9 +178,8 @@ class _FocusedMenuDetails extends StatefulWidget {
   final Offset childOffset;
   final Size childSize;
   final Widget child;
-  final double? blurSize;
   final double? menuWidth;
-  final Color? blurBackgroundColor;
+  final Color? routeBackgroundColor;
   final double bottomOffsetHeight;
   final double menuOffset;
   final bool right;
@@ -197,8 +193,7 @@ class _FocusedMenuDetails extends StatefulWidget {
     required this.childOffset,
     required this.childSize,
     required this.menuBoxDecoration,
-    required this.blurSize,
-    required this.blurBackgroundColor,
+    required this.routeBackgroundColor,
     required this.menuWidth,
     required this.bottomOffsetHeight,
     required this.menuOffset,
@@ -235,7 +230,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
 
     return Material(
       type: MaterialType.canvas,
-      color: (widget.blurBackgroundColor) ?? Colors.black.withOpacity(0.35),
+      color: (widget.routeBackgroundColor) ?? Colors.black.withOpacity(0.35),
       child: Stack(
         fit: StackFit.expand,
         children: <Widget>[
