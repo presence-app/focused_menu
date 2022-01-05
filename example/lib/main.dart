@@ -83,7 +83,6 @@ class MyHomePage extends StatelessWidget {
                         onPressed: () {},
                       ),
                     ],
-                    onPressed: () {},
                     child: Card(
                       child: Padding(
                         padding: EdgeInsets.all(12.0),
