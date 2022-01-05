@@ -35,7 +35,7 @@ class FocusedMenuItem extends StatelessWidget {
           child: IconTheme.merge(
             data: const IconThemeData(size: 20.0),
             child: Container(
-              height: kItemExtent,
+              height: double.infinity,
               color: pressing ? Colors.grey : backgroundColor,
               padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Row(

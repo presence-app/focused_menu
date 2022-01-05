@@ -7,8 +7,6 @@ import 'modals.dart';
 
 export 'modals.dart';
 
-const kItemExtent = 42.0;
-
 class FocusedMenuHolder extends StatefulWidget {
   final Widget child;
   final double? menuWidth;
@@ -29,6 +27,8 @@ class FocusedMenuHolder extends StatefulWidget {
 
   final bool enabled;
 
+  final double itemExtent;
+
   const FocusedMenuHolder({
     Key? key,
     required this.child,
@@ -44,6 +44,7 @@ class FocusedMenuHolder extends StatefulWidget {
     this.openWithTap = false,
     this.pressScale = 0.925,
     this.enabled = true,
+    this.itemExtent = 42.0,
   }) : super(key: key);
 
   @override
@@ -163,6 +164,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             bottomOffsetHeight: widget.bottomOffsetHeight ?? 20.0,
             menuOffset: widget.menuOffset ?? 0,
             right: widget.right,
+            itemExtent: widget.itemExtent,
           );
         },
         fullscreenDialog: true,
@@ -185,6 +187,7 @@ class _FocusedMenuDetails extends StatefulWidget {
   final double bottomOffsetHeight;
   final double menuOffset;
   final bool right;
+  final double itemExtent;
 
   const _FocusedMenuDetails({
     Key? key,
@@ -200,6 +203,7 @@ class _FocusedMenuDetails extends StatefulWidget {
     required this.bottomOffsetHeight,
     required this.menuOffset,
     required this.right,
+    required this.itemExtent,
   }) : super(key: key);
 
   @override
@@ -214,7 +218,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
     final mq = MediaQuery.of(context);
     final size = mq.size;
 
-    final menuHeight = widget.menuItems.length * kItemExtent;
+    final menuHeight = widget.menuItems.length * widget.itemExtent;
 
     final maxMenuWidth = widget.menuWidth ?? 250.0;
     final leftOffset = (widget.childOffset.dx + maxMenuWidth) < size.width
@@ -266,7 +270,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
                         final item = widget.menuItems[index];
                         return Container(
                           alignment: Alignment.center,
-                          height: kItemExtent,
+                          height: widget.itemExtent,
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
