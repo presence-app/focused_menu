@@ -27,7 +27,7 @@ class MyHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.lightGreenAccent,
         body: Padding(
           padding: const EdgeInsets.all(15.0),
           child: Column(
@@ -36,7 +36,7 @@ class MyHomePage extends StatelessWidget {
                 'Music Albums',
                 style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ...List.generate(
                 8,
                 (e) => Align(

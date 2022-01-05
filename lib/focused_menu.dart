@@ -1,12 +1,13 @@
 library focused_menu;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'modals.dart';
 
 export 'modals.dart';
 
-const kItemExtent = 45.0;
+const kItemExtent = 42.0;
 
 class FocusedMenuHolder extends StatefulWidget {
   final Widget child;
@@ -25,15 +26,12 @@ class FocusedMenuHolder extends StatefulWidget {
 
   final bool right;
 
-  /// Whether the item is not visible in the screen, needing to request a
-  /// scroll
-  final bool Function()? onScrollRequested;
+  final double pressScale;
 
   const FocusedMenuHolder({
     Key? key,
     required this.child,
     required this.menuItems,
-    this.onScrollRequested,
     this.right = false,
     this.onPressed,
     this.duration,
@@ -44,6 +42,7 @@ class FocusedMenuHolder extends StatefulWidget {
     this.bottomOffsetHeight,
     this.menuOffset,
     this.openWithTap = false,
+    this.pressScale = 0.925,
   }) : super(key: key);
 
   @override
@@ -74,6 +73,10 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
 
   Widget get child => Hero(
         tag: containerKey,
+        // createRectTween: (a, b) {
+        //   // custom curve
+        //   return CustomRectTween(a: a, b: b);
+        // },
         child: Material(
           type: MaterialType.transparency,
           child: widget.child,
@@ -81,7 +84,6 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
       );
 
   double _currentScale = 1.0;
-  static const double _pressScale = 0.85;
   static const _animationDuration = Duration(milliseconds: 100);
 
   Future<void> resetScale([double value = 1.0]) async {
@@ -97,7 +99,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
         widget.onPressed?.call();
         await openMenu(context);
       },
-      onTapDown: (_) => resetScale(_pressScale),
+      onTapDown: (_) => resetScale(widget.pressScale),
       onTapUp: (_) {
         resetScale();
         widget.onPressed?.call();
@@ -107,7 +109,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
       },
       onLongPress: () async {
         if (!widget.openWithTap) {
-          await resetScale();
+          resetScale();
           openMenu(context);
         }
       },
@@ -124,13 +126,18 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   Future<void> openMenu(BuildContext context) async {
     getOffset(context);
 
+    HapticFeedback.mediumImpact();
+
     await Navigator.push(
       context,
       PageRouteBuilder(
         transitionDuration:
             widget.duration ?? const Duration(milliseconds: 200),
         pageBuilder: (context, animation, secondaryAnimation) {
-          animation = Tween(begin: 0.0, end: 1.0).animate(animation);
+          animation = CurvedAnimation(
+            parent: animation,
+            curve: Curves.easeInOutExpo,
+          );
           return _FocusedMenuDetails(
             animation: animation,
             menuBoxDecoration: widget.menuBoxDecoration,
@@ -188,39 +195,28 @@ class _FocusedMenuDetails extends StatefulWidget {
 }
 
 class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
-  Animation<double> get _animation => CurvedAnimation(
-        parent: widget.animation,
-        // curve: Curves.easeInOutBack,
-        curve: Curves.linear,
-      );
-  // .drive(Tween<double>(
-  //   begin: 0.83,
-  //   end: 1.0,
-  // ));
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  Animation<double> get _animation => widget.animation;
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+    final mq = MediaQuery.of(context);
+    final size = mq.size;
 
-    final maxMenuHeight = size.height * 0.45;
-    final listHeight = widget.menuItems.length * kItemExtent;
+    final menuHeight = widget.menuItems.length * kItemExtent;
 
     final maxMenuWidth = widget.menuWidth ?? 250.0;
-    final double menuHeight = listHeight.clamp(0, maxMenuHeight);
     final leftOffset = (widget.childOffset.dx + maxMenuWidth) < size.width
         ? widget.childOffset.dx
         : (widget.childOffset.dx - maxMenuWidth + widget.childSize!.width);
-    final double topOffset = (widget.childOffset.dy + widget.childSize!.height)
-        .clamp(0, size.height - menuHeight - widget.bottomOffsetHeight);
+    final double topOffset =
+        (widget.childOffset.dy + widget.childSize!.height).clamp(
+      0,
+      size.height - menuHeight - widget.bottomOffsetHeight - mq.padding.bottom,
+    );
 
     return Scaffold(
       backgroundColor:
-          (widget.blurBackgroundColor ?? Colors.black).withOpacity(0.3),
+          (widget.blurBackgroundColor) ?? Colors.black.withOpacity(0.35),
       body: Stack(
         fit: StackFit.expand,
         children: <Widget>[
@@ -238,10 +234,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
             right: widget.right ? 12.0 : null,
             child: ScaleTransition(
               scale: _animation,
-              alignment:
-                  widget.right ? Alignment.centerRight : Alignment.centerLeft,
-              // sizeFactor: _animation,
-              // axisAlignment: 1.0,
+              alignment: widget.right ? Alignment.center : Alignment.center,
               child: FadeTransition(
                 opacity: _animation,
                 child: Container(
@@ -295,5 +288,17 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
         ],
       ),
     );
+  }
+}
+
+class CustomRectTween extends RectTween {
+  CustomRectTween({this.a, this.b}) : super(begin: a, end: b);
+
+  final Rect? a;
+  final Rect? b;
+
+  @override
+  Rect? lerp(double t) {
+    return Rect.lerp(a, b, Curves.easeInOutExpo.transform(t));
   }
 }

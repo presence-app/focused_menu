@@ -23,7 +23,7 @@ class FocusedMenuItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return _PressingEffect(
-      onPressed: onPressed ?? () => Navigator.of(context).pop(),
+      onPressed: onPressed ?? Navigator.of(context).pop,
       builder: (context, pressing) {
         return DefaultTextStyle(
           style: const TextStyle(
@@ -33,15 +33,11 @@ class FocusedMenuItem extends StatelessWidget {
             color: Colors.black,
           ).merge(style).merge(pressing ? pressingTextStyle : null),
           child: IconTheme.merge(
-            data: const IconThemeData(
-              size: 20.0,
-            ),
+            data: const IconThemeData(size: 20.0),
             child: Container(
               height: kItemExtent,
               color: pressing ? Colors.grey : backgroundColor,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 18.0,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 18.0),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
