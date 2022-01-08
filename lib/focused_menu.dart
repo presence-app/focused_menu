@@ -86,9 +86,25 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
         createRectTween: (a, b) {
           return CustomRectTween(a: a, b: b);
         },
-        child: Material(
-          type: MaterialType.transparency,
-          child: widget.child,
+        // flightShuttleBuilder:
+        //     (context, animation, direction, fromContext, toContext) {
+        //   return Material(
+        //     type: MaterialType.transparency,
+        //     child: SizedBox(
+        //       height: childSize?.height,
+        //       width: childSize?.width,
+        //       child: widget.child,
+        //     ),
+        //   );
+        // },
+        child: AnimatedScale(
+          duration: _animationDuration,
+          scale: _currentScale,
+          curve: Curves.ease,
+          child: Material(
+            type: MaterialType.transparency,
+            child: widget.child,
+          ),
         ),
       );
 
@@ -123,12 +139,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
       },
       onLongPressEnd: (_) => resetScale(),
       onTapCancel: () => resetScale(),
-      child: AnimatedScale(
-        duration: _animationDuration,
-        scale: _currentScale,
-        curve: Curves.ease,
-        child: child,
-      ),
+      child: child,
     );
   }
 
@@ -138,6 +149,8 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     getOffset(context);
 
     HapticFeedback.mediumImpact();
+
+    FocusScope.of(context).unfocus();
 
     await Navigator.push(
       context,
@@ -312,10 +325,9 @@ class CustomRectTween extends RectTween {
   final Rect? a;
   final Rect? b;
 
-  @override
-  Rect? lerp(double t) {
-    // MaterialRectArcTween();
-    // return Rect.lerp(a, b, Curves.easeInOutExpo.transform(t));
-    return Rect.lerp(a, b, t);
-  }
+  // @override
+  // Rect? lerp(double t) {
+  //   // MaterialRectArcTween();
+  //   // return Rect.lerp(a, b, Curves.easeInOutExpo.transform(t));
+  // }
 }
