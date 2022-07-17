@@ -28,11 +28,15 @@ class FocusedMenuHolder extends StatefulWidget {
 
   final double itemExtent;
 
+  final FocusedMenuHeader? menuHeader;
+  final double headerHeight;
+  final EdgeInsets headerPadding;
+
   const FocusedMenuHolder({
     Key? key,
     required this.child,
     required this.menuItems,
-    this.right = false,
+    this.right = true,
     this.duration,
     this.menuBoxDecoration,
     this.routeBackgroundColor,
@@ -43,6 +47,9 @@ class FocusedMenuHolder extends StatefulWidget {
     this.pressScale = 0.925,
     this.enabled = true,
     this.itemExtent = 42.0,
+    this.menuHeader,
+    this.headerHeight = 35,
+    this.headerPadding = const EdgeInsets.all(8),
   }) : super(key: key);
 
   @override
@@ -58,7 +65,7 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) => getOffset(context));
+    WidgetsBinding.instance.addPostFrameCallback((_) => getOffset(context));
   }
 
   void getOffset(BuildContext context) {
@@ -175,6 +182,9 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             menuOffset: widget.menuOffset ?? 0,
             right: widget.right,
             itemExtent: widget.itemExtent,
+            headerHeight: widget.headerHeight,
+            menuHeader: widget.menuHeader,
+            headerPadding: widget.headerPadding,
           );
         },
         fullscreenDialog: true,
@@ -197,6 +207,9 @@ class _FocusedMenuDetails extends StatefulWidget {
   final double menuOffset;
   final bool right;
   final double itemExtent;
+  final double headerHeight;
+  final FocusedMenuHeader? menuHeader;
+  final EdgeInsets headerPadding;
 
   const _FocusedMenuDetails({
     Key? key,
@@ -212,6 +225,9 @@ class _FocusedMenuDetails extends StatefulWidget {
     required this.menuOffset,
     required this.right,
     required this.itemExtent,
+    required this.headerHeight,
+    required this.menuHeader,
+    required this.headerPadding,
   }) : super(key: key);
 
   @override
@@ -236,7 +252,6 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
       0.0,
       size.height - menuHeight - widget.bottomOffsetHeight - mq.padding.bottom,
     );
-
     final double rightOffset =
         (leftOffset + widget.childSize.width - maxMenuWidth)
             .clamp(leftOffset, size.width);
@@ -256,11 +271,23 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
             ),
           ),
           Positioned(
+            top: topOffset -
+                widget.childSize.height -
+                widget.headerHeight -
+                widget.headerPadding.bottom,
+            left: widget.right ? rightOffset : leftOffset,
+            width: widget.menuWidth ?? maxMenuWidth,
+            child: Align(
+              alignment: widget.right ? Alignment.topLeft : Alignment.topRight,
+              child: widget.menuHeader,
+            ),
+          ),
+          Positioned(
             top: topOffset + (widget.bottomOffsetHeight / 2),
             left: widget.right ? rightOffset : leftOffset,
             child: ScaleTransition(
               scale: _animation,
-              alignment: widget.right ? Alignment.center : Alignment.center,
+              alignment: Alignment.center,
               child: FadeTransition(
                 opacity: _animation,
                 child: Container(

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:focused_menu/focused_menu.dart';
-import 'package:focused_menu/modals.dart';
 
 void main() {
   runApp(MyApp());
@@ -43,8 +42,6 @@ class MyHomePage extends StatelessWidget {
                   alignment:
                       e.isEven ? Alignment.centerLeft : Alignment.centerRight,
                   child: FocusedMenuHolder(
-                    right: e.isOdd,
-                    blurSize: 5.0,
                     menuItems: <FocusedMenuItem>[
                       FocusedMenuItem(
                         title: Text('Reply'),

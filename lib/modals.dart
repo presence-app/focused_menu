@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:focused_menu/focused_menu.dart';
 
 class FocusedMenuItem extends StatelessWidget {
   final Color? backgroundColor;
@@ -82,5 +81,42 @@ class __PressingEffectState extends State<_PressingEffect> {
       onTapCancel: () => setState(() => _pressing = false),
       child: widget.builder(context, _pressing),
     );
+  }
+}
+
+class FocusedMenuHeader extends StatefulWidget {
+  const FocusedMenuHeader({
+    Key? key,
+    this.height,
+    this.width,
+    this.decoration,
+    this.clipBehavior = Clip.none,
+  }) : super(key: key);
+
+  final BoxDecoration? decoration;
+  final double? height;
+  final double? width;
+  final Clip clipBehavior;
+
+  @override
+  State<FocusedMenuHeader> createState() => _FocusedMenuHeaderState();
+
+  Offset get offset => _FocusedMenuHeaderState().offset;
+}
+
+class _FocusedMenuHeaderState extends State<FocusedMenuHeader> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: widget.height,
+      width: widget.width,
+      clipBehavior: widget.clipBehavior,
+      decoration: widget.decoration,
+    );
+  }
+
+  Offset get offset {
+    final RenderBox box = context.findRenderObject() as RenderBox;
+    return box.localToGlobal(Offset.zero);
   }
 }
