@@ -91,17 +91,17 @@ class FocusedMenuHeader extends StatefulWidget {
     this.width,
     this.decoration,
     this.clipBehavior = Clip.none,
+    this.child,
   }) : super(key: key);
 
   final BoxDecoration? decoration;
   final double? height;
   final double? width;
   final Clip clipBehavior;
+  final Widget? child;
 
   @override
   State<FocusedMenuHeader> createState() => _FocusedMenuHeaderState();
-
-  Offset get offset => _FocusedMenuHeaderState().offset;
 }
 
 class _FocusedMenuHeaderState extends State<FocusedMenuHeader> {
@@ -112,11 +112,7 @@ class _FocusedMenuHeaderState extends State<FocusedMenuHeader> {
       width: widget.width,
       clipBehavior: widget.clipBehavior,
       decoration: widget.decoration,
+      child: widget.child,
     );
-  }
-
-  Offset get offset {
-    final RenderBox box = context.findRenderObject() as RenderBox;
-    return box.localToGlobal(Offset.zero);
   }
 }
