@@ -29,8 +29,6 @@ class FocusedMenuHolder extends StatefulWidget {
   final double itemExtent;
 
   final FocusedMenuHeader? menuHeader;
-  final double headerHeight;
-  final EdgeInsets headerPadding;
 
   const FocusedMenuHolder({
     Key? key,
@@ -48,8 +46,6 @@ class FocusedMenuHolder extends StatefulWidget {
     this.enabled = true,
     this.itemExtent = 42.0,
     this.menuHeader,
-    this.headerHeight = 35,
-    this.headerPadding = const EdgeInsets.all(8),
   }) : super(key: key);
 
   @override
@@ -182,9 +178,9 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
             menuOffset: widget.menuOffset ?? 0,
             right: widget.right,
             itemExtent: widget.itemExtent,
-            headerHeight: widget.headerHeight,
+            headerHeight: widget.menuHeader?.height ?? 0,
             menuHeader: widget.menuHeader,
-            headerPadding: widget.headerPadding,
+            headerPadding: widget.menuHeader?.margin ?? EdgeInsets.zero,
           );
         },
         fullscreenDialog: true,
