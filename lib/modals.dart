@@ -91,6 +91,7 @@ class FocusedMenuHeader extends StatefulWidget {
     this.width,
     this.decoration,
     this.child,
+    this.borderRadius,
     this.padding = EdgeInsets.zero,
     this.margin = EdgeInsets.zero,
     this.clipBehavior = Clip.none,
@@ -103,6 +104,7 @@ class FocusedMenuHeader extends StatefulWidget {
   final Widget? child;
   final EdgeInsets padding;
   final EdgeInsets margin;
+  final BorderRadius? borderRadius;
 
   @override
   State<FocusedMenuHeader> createState() => _FocusedMenuHeaderState();
@@ -111,14 +113,18 @@ class FocusedMenuHeader extends StatefulWidget {
 class _FocusedMenuHeaderState extends State<FocusedMenuHeader> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: widget.padding,
-      margin: widget.margin,
-      height: widget.height,
-      width: widget.width,
+    return ClipRRect(
+      borderRadius: widget.borderRadius,
       clipBehavior: widget.clipBehavior,
-      decoration: widget.decoration,
-      child: widget.child,
+      child: Container(
+        padding: widget.padding,
+        margin: widget.margin,
+        height: widget.height,
+        width: widget.width,
+        clipBehavior: widget.clipBehavior,
+        decoration: widget.decoration,
+        child: widget.child,
+      ),
     );
   }
 }
