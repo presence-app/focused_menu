@@ -271,7 +271,9 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
                 widget.childSize.height -
                 widget.headerHeight -
                 widget.headerPadding.bottom,
-            left: widget.right ? rightOffset : leftOffset,
+            left: widget.right
+                ? rightOffset + (widget.menuHeader?.offset ?? 0)
+                : leftOffset + (widget.menuHeader?.offset ?? 0),
             width: widget.menuHeader?.width ?? widget.menuWidth ?? maxMenuWidth,
             child: Align(
               alignment: widget.right ? Alignment.topLeft : Alignment.topRight,
@@ -280,9 +282,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
           ),
           Positioned(
             top: topOffset + (widget.bottomOffsetHeight / 2),
-            left: widget.right
-                ? rightOffset + (widget.menuHeader?.offset ?? 0)
-                : leftOffset + (widget.menuHeader?.offset ?? 0),
+            left: widget.right ? rightOffset : leftOffset,
             child: ScaleTransition(
               scale: _animation,
               alignment: Alignment.center,
