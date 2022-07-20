@@ -272,7 +272,7 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
                 widget.headerHeight -
                 widget.headerPadding.bottom,
             left: widget.right ? rightOffset : leftOffset,
-            width: widget.menuWidth ?? maxMenuWidth,
+            width: widget.menuHeader?.width ?? widget.menuWidth ?? maxMenuWidth,
             child: Align(
               alignment: widget.right ? Alignment.topLeft : Alignment.topRight,
               child: widget.menuHeader,
