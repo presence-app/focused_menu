@@ -280,7 +280,9 @@ class _FocusedMenuDetailsState extends State<_FocusedMenuDetails> {
           ),
           Positioned(
             top: topOffset + (widget.bottomOffsetHeight / 2),
-            left: widget.right ? rightOffset : leftOffset,
+            left: widget.right
+                ? rightOffset + (widget.menuHeader?.offset ?? 0)
+                : leftOffset + (widget.menuHeader?.offset ?? 0),
             child: ScaleTransition(
               scale: _animation,
               alignment: Alignment.center,

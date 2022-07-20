@@ -92,6 +92,7 @@ class FocusedMenuHeader extends StatefulWidget {
     this.decoration,
     this.child,
     this.borderRadius,
+    this.offset,
     this.padding = EdgeInsets.zero,
     this.margin = EdgeInsets.zero,
     this.clipBehavior = Clip.none,
@@ -105,6 +106,7 @@ class FocusedMenuHeader extends StatefulWidget {
   final EdgeInsets padding;
   final EdgeInsets margin;
   final BorderRadius? borderRadius;
+  final double? offset;
 
   @override
   State<FocusedMenuHeader> createState() => _FocusedMenuHeaderState();
