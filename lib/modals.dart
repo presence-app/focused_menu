@@ -115,18 +115,14 @@ class FocusedMenuHeader extends StatefulWidget {
 class _FocusedMenuHeaderState extends State<FocusedMenuHeader> {
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: widget.borderRadius,
+    return Container(
+      padding: widget.padding,
+      margin: widget.margin,
+      height: widget.height,
+      width: widget.width,
       clipBehavior: widget.clipBehavior,
-      child: Container(
-        padding: widget.padding,
-        margin: widget.margin,
-        height: widget.height,
-        width: widget.width,
-        clipBehavior: widget.clipBehavior,
-        decoration: widget.decoration,
-        child: widget.child,
-      ),
+      decoration: widget.decoration,
+      child: widget.child,
     );
   }
 }
