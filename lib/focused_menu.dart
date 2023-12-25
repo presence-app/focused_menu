@@ -30,6 +30,8 @@ class FocusedMenuHolder extends StatefulWidget {
 
   final FocusedMenuHeader? menuHeader;
 
+  final bool useHeroAnimation;
+
   const FocusedMenuHolder({
     Key? key,
     required this.child,
@@ -46,6 +48,7 @@ class FocusedMenuHolder extends StatefulWidget {
     this.enabled = true,
     this.itemExtent = 42.0,
     this.menuHeader,
+    this.useHeroAnimation = true,
   }) : super(key: key);
 
   @override
@@ -53,7 +56,7 @@ class FocusedMenuHolder extends StatefulWidget {
 }
 
 class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
-  GlobalKey containerKey = GlobalKey();
+ // GlobalKey containerKey = GlobalKey();
 
   Offset childOffset = const Offset(0, 0);
   Size? childSize;
@@ -65,8 +68,12 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   }
 
   void getOffset(BuildContext context) {
+    // Without globalKey
     final renderBox =
-        containerKey.currentContext!.findRenderObject() as RenderBox;
+        context.findRenderObject() as RenderBox;
+    // With globalKey
+    //final renderBox =
+    //  containerKey.currentContext!.findRenderObject() as RenderBox;
     final size = renderBox.size;
     final offset = renderBox.localToGlobal(
       Offset.zero,
@@ -84,8 +91,13 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
     }
   }
 
-  Widget get child => Hero(
-        tag: containerKey,
+  Widget get child {
+    if (widget.useHeroAnimation) {
+      return Hero(
+        // Without globalKey
+        tag: widget.child,
+        // With globalKey
+        //tag: containerKey,
         createRectTween: (a, b) {
           return CustomRectTween(a: a, b: b);
         },
@@ -110,6 +122,11 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
           ),
         ),
       );
+    } else {
+      return widget.child;
+    }
+  }
+
 
   double _currentScale = 1.0;
   static const _animationDuration = Duration(milliseconds: 100);
@@ -123,7 +140,8 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      key: containerKey,
+      //key: containerKey,
+      key: ValueKey(widget.child),
       onSecondaryTap: () async {
         await openMenu(context);
       },

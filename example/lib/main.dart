@@ -42,6 +42,7 @@ class MyHomePage extends StatelessWidget {
                   alignment:
                       e.isEven ? Alignment.centerLeft : Alignment.centerRight,
                   child: FocusedMenuHolder(
+                    useHeroAnimation: false,
                     menuItems: <FocusedMenuItem>[
                       FocusedMenuItem(
                         title: Text('Reply'),
