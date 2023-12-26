@@ -64,7 +64,10 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) => getOffset(context));
+    //WidgetsBinding.instance.addPostFrameCallback((_) => getOffset(context));
+    Future.delayed(const Duration(milliseconds: 0), () {
+      getOffset(context);
+    });
   }
 
   void getOffset(BuildContext context) {
