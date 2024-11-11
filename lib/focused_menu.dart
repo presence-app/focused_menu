@@ -1,5 +1,7 @@
 library focused_menu;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -60,12 +62,13 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
 
   Offset childOffset = const Offset(0, 0);
   Size? childSize;
+  late final Timer _initTimer;
 
   @override
   void initState() {
     super.initState();
     //WidgetsBinding.instance.addPostFrameCallback((_) => getOffset(context));
-    Future.delayed(const Duration(milliseconds: 16), () {
+    _initTimer = Timer(const Duration(milliseconds: 16), () {
       if (mounted) getOffset(context);
     });
   }
@@ -208,6 +211,12 @@ class _FocusedMenuHolderState extends State<FocusedMenuHolder> {
         opaque: false,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _initTimer.cancel();
+    super.dispose();
   }
 }
 
